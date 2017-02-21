@@ -1,0 +1,79 @@
+﻿@using WebGridDemo.Models;
+@model IEnumerable<Student>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "WebGrid Demo";
+}
+<style>
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    #searchBar .col-md-2 {
+        padding-left: 0px;
+    }
+</style>
+
+<h2>Student List <small>Dynamic content</small></h2>
+<hr />
+
+@using (Html.BeginForm("Index", "Student", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-md-10" id="searchBar">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Name" name="Name" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Phone" name="Phone" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Address" name="Address" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Class" name="Class" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <input type="submit" onclick="return ShowProgress();" class="btn btn-default" value="Search" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        @Html.ActionLink("Create Student", "Create", "", new { @class = "btn btn-primary" })
+    </div>
+}
+@{
+    //var grid = new WebGrid(Model, canSort: false, rowsPerPage: 5, canPage: true);
+    //grid.Pager(WebGridPagerModes.NextPrevious);
+    //int item = 0;
+
+    var grid = new WebGrid(Model, canSort: true, canPage: true, rowsPerPage: 5);
+}
+
+<div id="dataGrid" class="table">
+    @grid.GetHtml(
+            columns: grid.Columns(
+            //grid.Column("SrNo", "Sr No"),
+            grid.Column(header: "Sr. No.", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex),
+            grid.Column("Name", "Name"),
+            grid.Column("Phone", "Contact No"),
+            grid.Column("Address", "Address"),
+            grid.Column("Class", "Qualification")
+            ),
+            mode: WebGridPagerModes.Numeric
+            )
+
+</div>
